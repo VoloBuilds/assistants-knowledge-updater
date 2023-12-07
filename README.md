@@ -1,56 +1,68 @@
-# Monsterbrew GPT Cloud Function
+# OpenAI Knowledge Updater
 
 ## Overview
+This project automates updating the knowledge base of an OpenAI assistant. Initially using Notion as a data source, it pulls data, writes it to a file, and uploads this file to an OpenAI assistant. The aim is to keep the AI assistant's information current and accurate. Emphasis is placed on expanding support to other data sources, with Notion serving as the starting point.
 
-This repository demonstrates how to write and deploy a simple Google Cloud Function (Firebase Function) accompanied by an OpenAPI description. The primary functionality of this function is to process text and return a URL after performing specific actions. It's designed to serve as an example of how such functions can be utilized as Actions in Custom GPTs.
+Full video tutorial using this code:
+[![Power OpenAI Assistants API with YOUR data automatically](https://img.youtube.com/vi/JzxUW0ZT4to/0.jpg)](https://youtu.be/JzxUW0ZT4to)
 
-Full video tutorial using this code to create a custom GPT with actions and knowledge:
-[![How to make GPTs with Actions and Knowledge | D&D Homebrew GPT](https://img.youtube.com/vi/m2lJqHix-9I/0.jpg)](https://youtu.be/m2lJqHix-9I)
+## Key Features
+- **Single File Update**: All data will be written to one file and only one data file will be associated with OpenAI. This is because OpenAI does not offer a way to tell files apart from each other, making it impossible to determine which files contain what data without managing it in a separate database.
+- **Focused on Extensibility**: Designed for easy integration with various data sources.
+- **Automated File Management**: Efficiently handles the deletion of old data files and uploading new ones for the OpenAI assistant.
 
+## Getting Started
 
-## Functionality
+### Prerequisites
+- Access to Notion and OpenAI accounts with necessary API keys.
+- A Firebase project for deploying the function.
 
-The `index.js` file contains 2 Cloud Functions. One is named `createHomebrew`. This function:
+### Installation and Deployment
+1. Clone the repository:
+   ```bash
+   git clone [repository URL]
+   ```
+2. Navigate to the project directory and install dependencies:
+   ```bash
+   cd [project-name]
+   npm install
+   ```
+3. Set Up Environment Variables:
+   - Create a `.env` file in the root of your project.
+   - Copy the contents from `.env.sample` to `.env`.
+   - Fill in your OpenAI API key and assistant ID:
+     ```
+     OPENAI_API_KEY=your_openai_api_key
+     ASSISTANT_ID=your_openai_assistant_id
+     ```
+4. Deploy to Firebase:
+   ```bash
+   firebase deploy --only functions
+   ```
 
-1. **Validates the Request**: It ensures that the incoming request is a POST method and checks for the presence of required content in the request body.
-2. **Processes the Text**: The function then uses Puppeteer to automate browser actions. It navigates to a specific website, inputs the received text, and performs certain actions to generate a URL.
-3. **Responds with a URL**: Finally, the function returns this URL as a response to the initial request.
+### Usage
+Make an HTTP request to your Firebase function with the Notion page ID and OpenAI assistant ID as query parameters.
 
-The other function, `privacyPolicy`, serves a static .txt file that you can use in your GPT.
+### Example Request
+```
+https://[your-firebase-function-url]/updateKnowledge?pageId=YOUR_NOTION_PAGE_ID&assistantId=YOUR_OPENAI_ASSISTANT_ID
+```
 
-## Prerequisites
+## Limitations and Contributions
+- **Data Source**: Only supports Notion with certain limitations in block type support and lack of pagination.
+- **File Management**: Uses a single file approach due to OpenAI API limitations.
+- **Deployment**: Designed for deployment on Firebase Functions without out-of-the-box support for local running.
 
-Before deploying this function, ensure you have the following:
-
-- Node.js installed
-- Firebase CLI installed and configured
-- Google Cloud account and Firebase project set up
-
-## Setup and Deployment
-
-1. **Install Dependencies**: Run `npm install` in the project directory to install required packages (`firebase-functions`, `puppeteer-core`, `chrome-aws-lambda`).
-2. **Deploy to Firebase**: Use the command `firebase deploy --only functions` to deploy the function to your Firebase project.
-3. **Make Privacy Policy public**: If you are creating a public GPT, you will need a public privacy policy. To remove the auth from this endpoint, you can run the following command:
-`gcloud functions add-iam-policy-binding privacyPolicy --member="allUsers" --role="roles/cloudfunctions.invoker"`
-
-## OpenAPI Description
-
-The `openapi.json` file in the repository provides a detailed description of the API implemented by the Cloud Function. This includes information about the endpoints, request methods, expected request body format, and response structure.
-
-## Usage
-
-To use this function:
-
-1. **Send a POST Request**: The request should be sent to the function's URL provided by Firebase after deployment.
-2. **Include Content in Request Body**: The `content` key in the request body must contain the text to be processed.
-3. **Receive the URL**: The function will return a URL in its response upon successful processing.
+We are actively seeking contributions, particularly for:
+- **Data Source Integration**: Adding more data sources.
+- **Enhanced Notion Support**: Improving Notion integration with more block types and pagination.
+- **Local Deployment**: Creating a local runnable version of the code.
 
 ## Contributing
-
-Contributions to enhance the functionality or documentation of this repository are welcome. Please follow the standard GitHub pull request process for your contributions.
+1. Fork the repository.
+2. Create a new branch for your feature.
+3. Implement and test your changes.
+4. Submit a pull request with a detailed description of your changes.
 
 ## License
-
-MIT
-
----
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
